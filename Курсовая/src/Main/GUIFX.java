@@ -18,7 +18,7 @@ public class GUIFX extends Application {
     	
 
        
-        stage.setTitle("Line Chart Sample");
+        stage.setTitle("Line Chart Samplei");
         //defining the axes
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
