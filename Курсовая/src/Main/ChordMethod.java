@@ -1,14 +1,34 @@
 package Main;
 
+import java.text.DecimalFormat;
+
+import Jama.Matrix;
+
 public class ChordMethod {
 	double[] points; 
 	private static final double DX = 0.00001;
 	private double[] coefficients;
+	private Matrix ans;
 	
 //	public static double derivative(double x, Derivative func) {
 //		return Math.round((func.f(x+DX)-func.f(x))/DX);
 //	}
-	
+	// Finds Lagrange's Polynomial coefficients
+//	public void getCoefficients(double[] points) {
+//		coefficients = new double[points.length/2];
+//		for (int i=0; i<points.length; i+=2) {
+//			double der = derivative(points[i], x->{
+//				//System.out.println(x);
+//				double w=1;
+//				for (int j=0; j<points.length; j+=2) {
+//					w*=(x-points[j]); 
+//				}
+//				//System.out.println(w);
+//				return w; // Returns auxiliary polynomial
+//			});
+//			coefficients[i/2]=der;
+//		}
+//	}
 	   public double chordMethod (double x_prev, double x_curr, double e) {
 	        double x_next = 0;
 	        double tmp;
@@ -39,32 +59,39 @@ public class ChordMethod {
 		}
 		return polynomial;
 	}
-
-	// Finds Lagrange's Polynomial coefficients
-//	public void getCoefficients(double[] points) {
-//		coefficients = new double[points.length/2];
-//		for (int i=0; i<points.length; i+=2) {
-//			double der = derivative(points[i], x->{
-//				//System.out.println(x);
-//				double w=1;
-//				for (int j=0; j<points.length; j+=2) {
-//					w*=(x-points[j]); 
-//				}
-//				//System.out.println(w);
-//				return w; // Returns auxiliary polynomial
-//			});
-//			coefficients[i/2]=der;
-//		}
-//	}
+	public String getFormula() {
+        double[][] lhsArray = new double[points.length/2][points.length/2];
+        double[] rhsArray = new double[points.length/2];
+        for (int i=0;i<points.length/2;i++) { // Creating Matrix of Xs
+        	//System.out.println("Asd "+i);
+        	for (int j=0; j<points.length/2; j++) {
+        		lhsArray[i][j]=Math.pow(points[i*2],j);
+        		//System.out.print(Math.pow(points[i*2],j)+" ");
+        	}
+        	//System.out.println();
+        }
+        for (int i=0; i<points.length/2; i++) {
+        	rhsArray[i]=points[i*2+1];
+        }
+        Matrix lhs = new Matrix(lhsArray);
+        Matrix rhs = new Matrix(rhsArray, 4);
+        ans = lhs.solve(rhs);
+        DecimalFormat fmt = new DecimalFormat("+ #,##0.0;- #");
+        String str=Double.toString(ans.get(0, 0))+" ";
+        for (int i=1; i<ans.getRowDimension(); i++) {
+        	str+=fmt.format(ans.get(i,0))+"x^"+i+" ";
+        	//System.out.print(ans.get(0, 0)+fmt.format(ans.get(1, 0))+"x"+fmt.format(ans.get(2, 0))+"x^2"+fmt.format(ans.get(3, 0))+"x^3");
+        }
+        return str;
+	}
 	public void test() {
-		points = new double[]{0,2, 10,1}; // Initializing array of points
-        double x1 = 2;
-        double x2 = 10;
-        double e = 0.001;
-        System.out.println(chordMethod(x1, x2, e));
-		//System.out.println(polynomial2(10));
+		points = new double[]{0,1, 1,3, 3,27, 4,81}; // Initializing array of points
+
+        System.out.println(getFormula()); // Printing formula
+        System.out.printf("%.0f",chordMethod(2, 3, 0.001)); // Printing root
 	}
 	public static void main(String[] args){
 		new ChordMethod().test();
 	}
+	
 }

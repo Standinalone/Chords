@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Main.GUIController">
+   <right>
+      <LineChart fx:id="chart" prefHeight="345.0" prefWidth="613.0" BorderPane.alignment="CENTER">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis animated="false" prefHeight="304.0" prefWidth="0.0" side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </right>
+   <bottom>
+      <Label fx:id="formula" prefHeight="55.0" prefWidth="630.0" text="Label" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+   </bottom>
+</BorderPane>
