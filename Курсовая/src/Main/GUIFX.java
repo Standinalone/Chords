@@ -19,8 +19,11 @@ public class GUIFX extends Application {
     	 try {
 	            BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("GUI.fxml"));
 	            Scene scene = new Scene(root, 1000, 500);
+	            scene.getStylesheets().add(getClass().getResource("Stylesheet.css").toExternalForm());
+
 	            primaryStage.setScene(scene);
 	            primaryStage.setTitle("График");
+
 	            primaryStage.show();
 	        } 
 	        catch(Exception e) {

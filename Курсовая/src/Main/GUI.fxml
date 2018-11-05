@@ -11,17 +11,17 @@
    <right>
       <LineChart fx:id="chart" prefHeight="345.0" prefWidth="613.0" BorderPane.alignment="CENTER">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <NumberAxis side="BOTTOM" fx:id="xAxis" />
         </xAxis>
         <yAxis>
-          <NumberAxis animated="false" prefHeight="304.0" prefWidth="0.0" side="LEFT" />
+          <NumberAxis fx:id="yAxis" animated="false" prefHeight="304.0" prefWidth="0.0" side="LEFT" />
         </yAxis>
       </LineChart>
    </right>
    <bottom>
       <Label fx:id="formula" prefHeight="55.0" prefWidth="630.0" text="Label" BorderPane.alignment="CENTER">
          <font>
-            <Font size="23.0" />
+            <Font size="10.0" />
          </font>
       </Label>
    </bottom>

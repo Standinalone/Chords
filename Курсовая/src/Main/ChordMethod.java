@@ -6,8 +6,8 @@ import Jama.Matrix;
 
 public class ChordMethod {
 	double[] points; 
-	private static final double DX = 0.00001;
-	private double[] coefficients;
+//	private static final double DX = 0.00001;
+//	private double[] coefficients;
 	private Matrix ans;
 	
 //	public static double derivative(double x, Derivative func) {
@@ -63,29 +63,26 @@ public class ChordMethod {
         double[][] lhsArray = new double[points.length/2][points.length/2];
         double[] rhsArray = new double[points.length/2];
         for (int i=0;i<points.length/2;i++) { // Creating Matrix of Xs
-        	//System.out.println("Asd "+i);
         	for (int j=0; j<points.length/2; j++) {
         		lhsArray[i][j]=Math.pow(points[i*2],j);
-        		//System.out.print(Math.pow(points[i*2],j)+" ");
+            	//System.out.print(Math.pow(points[i*2],j)+" ");
         	}
-        	//System.out.println();
-        }
-        for (int i=0; i<points.length/2; i++) {
-        	rhsArray[i]=points[i*2+1];
+        	rhsArray[i]=points[i*2+1]; // Creating Matrix of Ys
+        	//System.out.println(points[i*2+1]);
         }
         Matrix lhs = new Matrix(lhsArray);
-        Matrix rhs = new Matrix(rhsArray, 4);
+        Matrix rhs = new Matrix(rhsArray, points.length/2);
         ans = lhs.solve(rhs);
         DecimalFormat fmt = new DecimalFormat("+ #,##0.0;- #");
-        String str=Double.toString(ans.get(0, 0))+" ";
+        String str=String.format("%.2f", ans.get(0, 0))+" ";
         for (int i=1; i<ans.getRowDimension(); i++) {
         	str+=fmt.format(ans.get(i,0))+"x^"+i+" ";
-        	//System.out.print(ans.get(0, 0)+fmt.format(ans.get(1, 0))+"x"+fmt.format(ans.get(2, 0))+"x^2"+fmt.format(ans.get(3, 0))+"x^3");
         }
         return str;
 	}
 	public void test() {
-		points = new double[]{0,1, 1,3, 3,27, 4,81}; // Initializing array of points
+		//points = new double[]{0,1, 1,3, 3,27, 4,81}; // Initializing array of points
+		points = new double[]{-3.5,-550, -3.25,-50, 3,27}; // Initializing array of points
 
         System.out.println(getFormula()); // Printing formula
         System.out.printf("%.0f",chordMethod(2, 3, 0.001)); // Printing root
