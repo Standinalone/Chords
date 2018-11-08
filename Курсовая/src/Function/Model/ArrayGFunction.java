@@ -35,8 +35,10 @@ public class ArrayGFunction extends AbstractGFunction{
 
 	public static void main(String[] args) {
 		// Normal work
+		System.out.println(new ArrayGFunction(-1,2, 1,2, 2,5).getFormula()); // g(x) = x^2+1
 		System.out.println(new ArrayGFunction(-5,-5, 3,3).test("a", "f", -2, 2, 1));
 		// Entering an odd amount of digits
+		System.out.println(new ArrayGFunction(1,0,3).getFormula());
 		System.out.println(new ArrayGFunction(1,0,3).test("a", "f", -2, 2, 1));
 	}
 }

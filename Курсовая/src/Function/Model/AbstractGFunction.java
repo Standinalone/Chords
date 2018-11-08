@@ -1,11 +1,38 @@
 package Function.Model;
 
+import java.text.DecimalFormat;
+
+import Jama.Matrix;
+
 public abstract class AbstractGFunction implements ExtendedFunction {
 	public abstract double getX(int i);
 	public abstract double getY(int i);
 	public abstract void setPoint(double x, double y, int i);
 	public abstract void addPoint(double x, double y);
 	public abstract int getPointsCount();
+	
+	public String getFormula() {
+		int martrixSize = getPointsCount();
+		double[][] lhsArray = new double[martrixSize][martrixSize];
+	    double[] rhsArray = new double[martrixSize];
+	    for (int i=0; i<martrixSize;i++) { 
+	    	for (int j=0; j<martrixSize; j++) {
+	    		lhsArray[i][j]=Math.pow(getX(i),j); // Creating Matrix of Xs (left-hand side)
+	    	}
+	    	rhsArray[i]=getY(i); // Creating Matrix of Ys (rifht-hand side)
+	    	//System.out.println(points[i*2+1]);
+	    }
+	    Matrix lhs = new Matrix(lhsArray);
+	    Matrix rhs = new Matrix(rhsArray, martrixSize);
+	    Matrix ans = lhs.solve(rhs);
+	    String str=new DecimalFormat("0.00").format(ans.get(ans.getRowDimension()-1, 0))+"x^"+(ans.getRowDimension()-1);
+	    DecimalFormat fmt = new DecimalFormat(" + #,##0.00; - #");
+	    for (int i=ans.getRowDimension()-2; i>0; i--) {
+	    	str+=fmt.format(ans.get(i,0))+"x^"+i;
+	    }
+	    str+=fmt.format(ans.get(0, 0));
+	    return str;
+	}
 	
 	@Override
 	public double applyAsDouble(double x) {
@@ -21,5 +48,4 @@ public abstract class AbstractGFunction implements ExtendedFunction {
 		}
 		return polynomial;
 	}
-
 }

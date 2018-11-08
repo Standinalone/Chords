@@ -44,27 +44,6 @@ public class MyFunction{
 //        }
 //        return str;
 //	}
-//	public void test() throws Exception{
-//		Point[] testPoints = new Point[] {new Point(0,1), new Point(1,3), new Point(3,27), new Point(4,81)};
-//		points = new double[]{0,1, 1,3, 3,27, 4,81}; // Initializing array of points
-//        System.out.println(getFormula()); // Printing formula
-//        System.out.printf("%.0f",chordMethod(2, 3, 0.001)); // Printing root
-//        try {
-//			//writeToFile("src/Main/XML/ByNames.txt");
-//        }
-//        catch (FileNotFoundException e) {
-//            System.err.println("Read failed");
-//            e.printStackTrace();
-//        }
-//        catch (IOException e) {
-//            System.err.println("Write failed");
-//            e.printStackTrace();
-//        }
-//        catch (InputMismatchException e) {
-//            e.printStackTrace();
-//            System.err.println("Wrong format");
-//        }
-//	}
 
 // Finding the root of function f(x) - g(x) = 0	
 	public double chordMethod (double xPrev, double xCurr, double eps) {

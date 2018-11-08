@@ -28,10 +28,16 @@ public class ArrayFFunction extends AbstractFFunction {
 	
 	public static void main(String[] args) {
 		// y=x
+		System.out.println(new ArrayFFunction(1,0).getFormula());
 		System.out.println(new ArrayFFunction(1,0).test("a", "f", -2, 2, 1));
 		// y=x^2
+		System.out.println(new ArrayFFunction(1,0,0).getFormula());
 		System.out.println(new ArrayFFunction(1,0,0).test("a", "f", -2, 2, 1));
 		// y=x^2+1
+		System.out.println(new ArrayFFunction(1,0,1).getFormula());
 		System.out.println(new ArrayFFunction(1,0,1).test("a", "f", -2, 2, 1));
+		// y=1
+		System.out.println(new ArrayFFunction(1).getFormula());
+		System.out.println(new ArrayFFunction(1).test("a", "f", -2, 2, 1));
 	}
 }

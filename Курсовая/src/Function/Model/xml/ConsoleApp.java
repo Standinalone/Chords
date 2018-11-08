@@ -9,14 +9,15 @@ public class ConsoleApp {
 		// The equation wasn't solved
         System.out.println(equation);
         // Common case f(x)=x^2 g(x)=x
-        System.out.println(equation.solve(-5,5,0.000001));
+        System.out.println(equation.solve(-5,5,0.000001,10));
         
         equation.saveReport("Common.html", null);
         
         // Has no roots
-        System.out.println(equation.readFromFile("src/Function/Model/xml/samples/EquationNoSolutions.xml").solve(-5,5,0.0001));
-
-        //equation.saveReport("NoSolutions.html", null, 0);        
+        System.out.println(equation.readFromFile("src/Function/Model/xml/samples/EquationNoSolutions.xml").solve(-5,5,0.0001,10));
+        
+        // Has two roots
+        System.out.println(equation.readFromFile("src/Function/Model/xml/samples/TwoRoots.xml").solve(-5,5,0.0001,100));       
         
         // Creating an equation from scratch
         equation.clearEquation();
@@ -25,6 +26,6 @@ public class ConsoleApp {
         equation.getGFunction().addPoint(1, 1);
         equation.getGFunction().addPoint(2, 1);
         
-        System.out.println(equation.solve(-5,5,0.0001));
+        System.out.println(equation.solve(-5,5,0.0001,10));
     }
 }

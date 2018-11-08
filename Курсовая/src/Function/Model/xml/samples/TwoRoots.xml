@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EquationData>
+    <Coefs>
+        <Coef Value = "-1" Index="0" />
+        <Coef Value = "0" Index="0" />
+        <Coef Value = "1" Index="0" />
+    </Coefs>
+    <Points>
+        <XYCoef X = "-0.5" Y = "0" />
+        <XYCoef X = "0" Y = "-0.5" />
+        <XYCoef X = "0.5" Y = "0" />
+    </Points>
+</EquationData>
