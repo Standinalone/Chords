@@ -1,13 +1,17 @@
 package Main;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
+import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
@@ -16,11 +20,14 @@ import Function.Model.AbstractFFunction;
 import Function.Model.AbstractGFunction;
 import Function.Model.xml.XMLEquation;
 import Function.Model.xml.XMLEquation.FileReadException;
+import Function.Model.xml.XMLEquation.FileWriteException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -33,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
@@ -52,6 +60,7 @@ public class GUIController implements Initializable {
 	@FXML TextField textFieldEps;
 	@FXML TextField textFieldF;
 	@FXML TextField textFieldG;
+	@FXML BorderPane bp;
 	public static void main(String[] args) {
 		GUIFX.main(args);
 	}
@@ -66,6 +75,33 @@ public class GUIController implements Initializable {
         textFieldF.clear();
         textFieldG.clear();
         textAreaRoots.clear();
+    }
+    @FXML public void doScreen() {
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("Отчеты"));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("html (*.html)", "*.html"));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Все файлы (*.*)", "*.*"));
+        fileChooser.setTitle("Составить отчет");
+        File file;
+        // Encoding an image (the screen of a BorderPane) to Base64 format and generating report
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        WritableImage image = bp.snapshot(new SnapshotParameters(), null);
+        
+        if ((file = fileChooser.showSaveDialog(null)) != null) {
+            try {
+            	ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", os);
+            	os.close();
+            	String base64 = Base64.getEncoder().encodeToString(os.toByteArray());
+            	equation.saveReport(file.getCanonicalPath(), base64);
+                showMessage("Отчет сохранен");
+            }
+            catch (IOException | FileWriteException e) {
+                showError("Ошибка записи");
+            }
+        }
     }
 	@FXML public void dataChanged(ActionEvent event) {
 		equation.clearEquation();

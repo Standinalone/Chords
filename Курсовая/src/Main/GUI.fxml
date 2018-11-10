@@ -19,7 +19,8 @@
                   <MenuItem mnemonicParsing="false" onAction="#doNew" text="Новый" />
                   <MenuItem mnemonicParsing="false" onAction="#doOpen" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#doSave" text="Сохранить" />
-              <MenuItem mnemonicParsing="false" text="Выйти" onAction="#doExit" />
+              <MenuItem mnemonicParsing="false" onAction="#doExit" text="Выйти" />
+                  <MenuItem fx:id="menuItemScreen" mnemonicParsing="false" text="Сохранить отчет" onAction="#doScreen" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">

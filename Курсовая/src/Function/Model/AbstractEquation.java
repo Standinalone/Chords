@@ -8,10 +8,10 @@ import java.util.stream.DoubleStream;
 public abstract class AbstractEquation {
 	private ExtendedFunction f;
 	private ExtendedFunction g;
-	private List<Double> root;
+	private List<Double> roots;
 	
 	public AbstractEquation clearRoots() {
-		root = new ArrayList<Double>();
+		roots = new ArrayList<Double>();
 		return this;
 	}
 	
@@ -40,6 +40,7 @@ public abstract class AbstractEquation {
 	}
 	
 	public AbstractEquation solve(double from, double to, double eps, int n) {
+		roots =  new ArrayList<Double>();
 		if((f!=null)&&(g!=null)) {
 			double part = (to>=0?to-from:-from+to)/n; // finding the length of one part from n equal parts
 			//System.out.println(whole);
@@ -56,8 +57,8 @@ public abstract class AbstractEquation {
 					}while (Math.abs(xNext-xCurr)>eps);
 //					System.out.println(new DecimalFormat("#0.00").format(xNext));
 					Double result = Double.valueOf(xNext);
-					if (!root.contains(result)&&!Double.isNaN(xNext)) {
-						root.add(Double.valueOf(new DecimalFormat("#0.00").format(xNext)));
+					if (!roots.contains(result)&&!Double.isNaN(xNext)) {
+						roots.add(Double.valueOf(new DecimalFormat("#0.00").format(xNext)));
 					}
 				}
 			}
@@ -66,14 +67,14 @@ public abstract class AbstractEquation {
 	}
 	
 	public List<Double> getRoots(){
-		return root==null?null: root;
+		return roots==null?null: roots;
 	}
 	
 	@Override
 	public String toString() {
 		if ((f==null)||(g==null)) return "Не все функции заданы либо не вызван метод solve";
-		if (root.size()==0) return "Корень не найден";
-		return root.toString();
+		if (roots.size()==0) return "Корень не найден";
+		return roots.toString();
 	}
 
 	public static void main(String[] args) throws Exception{
