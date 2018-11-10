@@ -1,48 +1,12 @@
-package Main;
+package GUI;
 
 import Jama.Matrix;
 
 public class MyFunction{
 	private double[] points;
 	private double[] coefs;
-//	private Point[] points; 
-//	private Matrix ans;
-//	public void setPoints (Point[] points) { // Setter to set points for the interpolation
-//		this.points = points;
-//	}
-//	public Point[] getPoints() {
-//		return points;
-//	}
-//	public Matrix getAnswers() { // Getter to get polynomial coefficients
-//		return ans;
-//	}
-
-//	    
-//	
-
 //	public void Vandermonde(double[] X, double[] Y, int degree) {
 //		degree = X.length;
-//	}
-//	public String getFormula() {
-//		int martrixSize = getPoints().length/2;
-//        double[][] lhsArray = new double[martrixSize][martrixSize];
-//        double[] rhsArray = new double[martrixSize];
-//        for (int i=0; i<martrixSize;i++) { 
-//        	for (int j=0; j<martrixSize; j++) {
-//        		lhsArray[i][j]=Math.pow(points[i*2],j); // Creating Matrix of Xs (left-hand side)
-//        	}
-//        	rhsArray[i]=points[i*2+1]; // Creating Matrix of Ys (rifht-hand side)
-//        	//System.out.println(points[i*2+1]);
-//        }
-//        Matrix lhs = new Matrix(lhsArray);
-//        Matrix rhs = new Matrix(rhsArray, points.length/2);
-//        ans = lhs.solve(rhs);
-//        DecimalFormat fmt = new DecimalFormat("+ #,##0.0;- #");
-//        String str=String.format("%.2f", ans.get(0, 0))+" ";
-//        for (int i=1; i<ans.getRowDimension(); i++) {
-//        	str+=fmt.format(ans.get(i,0))+"x^"+i+" ";
-//        }
-//        return str;
 //	}
 
 // Finding the root of function f(x) - g(x) = 0	

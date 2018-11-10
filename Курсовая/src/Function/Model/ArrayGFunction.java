@@ -1,5 +1,7 @@
 package Function.Model;
 
+import java.util.Arrays;
+
 public class ArrayGFunction extends AbstractGFunction{
 	private double[] points;
 	
@@ -25,7 +27,12 @@ public class ArrayGFunction extends AbstractGFunction{
 
 	@Override
 	public void addPoint(double x, double y) {
-		throw new UnsupportedOperationException();
+//		throw new UnsupportedOperationException();
+		if (points==null) points = new double[0];
+		points = Arrays.copyOf(points, points.length+2);
+		points[points.length-2]=x;
+		points[points.length-1]=y;
+		
 	}
 
 	@Override

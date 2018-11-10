@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Main.GUIController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.GUIController">
    <top>
       <MenuBar prefHeight="7.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <menus>
@@ -19,7 +19,8 @@
                   <MenuItem mnemonicParsing="false" onAction="#doNew" text="Новый" />
                   <MenuItem mnemonicParsing="false" onAction="#doOpen" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#doSave" text="Сохранить" />
-              <MenuItem mnemonicParsing="false" text="Выйти" onAction="#doExit" />
+              <MenuItem mnemonicParsing="false" onAction="#doExit" text="Выйти" />
+                  <MenuItem fx:id="menuItemScreen" mnemonicParsing="false" text="Сохранить отчет" onAction="#doScreen" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">
@@ -51,7 +52,7 @@
             <Label layoutX="14.0" layoutY="72.0" text="Коэффициенты f(x)" />
             <Label layoutX="15.0" layoutY="252.0" text="Список исходных точек для g(x)" />
             <Label layoutX="15.0" layoutY="187.0" text="Корни уравнения f(x)=g(x)" />
-            <TextArea fx:id="textAreaRoots" editable="false" layoutX="14.0" layoutY="213.0" prefHeight="39.0" prefWidth="198.0" />
+            <TextArea fx:id="textAreaRoots" editable="false" layoutX="14.0" layoutY="213.0" prefHeight="80.0" prefWidth="198.0" />
             <Label layoutX="13.0" layoutY="-10.0" prefHeight="49.0" prefWidth="201.0" text="Границы, число разбиений, eps" wrapText="true" />
             <TextField fx:id="textFieldDivision" layoutX="103.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="40.0" promptText="100" />
             <TextField fx:id="textFieldLeft" layoutX="13.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="35.0" promptText="-10" />

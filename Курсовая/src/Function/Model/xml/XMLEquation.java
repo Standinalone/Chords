@@ -3,7 +3,7 @@ package Function.Model.xml;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.*;
 import java.io.*;
-
+import java.util.ArrayList;
 
 import Function.Model.AbstractEquation;
 import Function.Model.AbstractFFunction;
@@ -116,12 +116,12 @@ public class XMLEquation extends AbstractEquation {
             out.printf("<h2>Отчет</h2>%n");
             out.printf("<p>В результате решения уравнения f(x)-g(x) " +
                        "с такими исходными данными:</p>%n");
-            out.printf("<h4>Дані для функції <span style='font-family:Times, Serif;'>" + 
-                       "<em>f(t)</em></span></h4>%n");
+            out.printf("<h4>Данные для функции <span style='font-family:Times, Serif;'>" + 
+                       "<em>f(x)</em></span></h4>%n");
             out.printf("<table border = '1' cellpadding=4 cellspacing=0>%n");
             out.printf("<tr>%n");
             out.printf("<th>Індекс</th>%n");
-            out.printf("<th>a</th>%n");
+            out.printf("<th>Коэффициент</th>%n");
             out.printf("</tr>%n");
             out.printf("<td>%n");
             for (int i = 0; i < getFFunction().getCoefCount(); i++) {
@@ -131,8 +131,9 @@ public class XMLEquation extends AbstractEquation {
                 out.printf("</tr>%n");
             }
             out.printf("</table>%n");
-            out.printf("<h4>Дані для функції <span style='font-family:Times, Serif;'>" +
-                       "<em>g(t)</em></span></h4>%n");
+            out.printf("<p>Формула: f(x) = " + getFFunction().getFormula() + "</p>");
+            out.printf("<h4>Данные для функции <span style='font-family:Times, Serif;'>" +
+                       "<em>g(x)</em></span></h4>%n");
             out.printf("<table border = '1' cellpadding=4 cellspacing=0>%n");
             out.printf("<tr>%n");
             out.printf("<th>Індекс</th>%n");
@@ -148,31 +149,24 @@ public class XMLEquation extends AbstractEquation {
                 out.printf("</tr>%n");
             }
             out.printf("</table>%n");
-//            out.printf("<p>Значення параметру <em>t</em>: %8.3f</p>%n", t);
-//            solve(t);
-//            switch (getRoots()) {
-//                case 0:
-//                    out.printf("<p>було встановлено, що рівняння не має коренів.%n</p>");
-//                    break;
-//                case 1:
-//                    if (getRoots().get(0) == null) {
-//                        out.printf("<p>було встановлено, що рівняння має безліч коренів.</p>%n");
-//                    }
-//                    else {
-//                        out.printf("<p>був отриманий такий корінь: %s</p>%n", getRoots().get(0));
-//                    }
-//                    break;
-//                case 2:
-//                    out.printf("<p>були отримані такі корені:</p>%n");
-//                    for (Double root : getRoots()) {
-//                        out.printf("%8.3f<br>%n", root);
-//                    }
-//                    break;
-//                default: 
-//                    throw new RuntimeException("Unknown error");
-//            }
+            out.printf("<p>Формула: g(x) = " + getGFunction().getFormula() + "</p>");
+            
+            solve(-5,5,0.00001,100);
+            switch (getRoots().size()) {
+                case 0:
+                    out.printf("<p>было установлено, что уравнение не имеет корней.%n</p>");
+                    break;
+                default: 
+                    out.printf("<p>были получены такие корни:</p>%n");
+                    for (Double root : getRoots()) {
+                        out.printf("x = %8.3f f(x)=g(x) = %8.3f<br>%n", root, getFFunction().y(root));
+                    }
+                    break;
+            }
+            
+            
             if (imageName != null) {
-                out.printf("<img src = \"" + imageName + "\"/>");
+                out.printf("<img src = \"data:image/png;base64, " + imageName + "\"/>");
             }
             out.printf("</body>%n");
             out.printf("</html>%n");
