@@ -218,6 +218,7 @@ public class GUIController implements Initializable {
 	    xAxis.setTickUnit(1);
 	    yAxis.setAutoRanging(false);
 	    yAxis.setTickUnit(1);
+	    //
 	    
 		if (rootsX.size()>0) {
 		    xAxis.setLowerBound(left);
