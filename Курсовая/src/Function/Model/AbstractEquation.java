@@ -70,6 +70,7 @@ public abstract class AbstractEquation {
 					}
 					else {
 						xNext = xCurr;
+						//asd
 						do{
 							tmp = xNext;
 							xNext = tmp - (f.y(tmp)-g.y(tmp))*(xCurr+part - tmp) / ((f.y(xCurr+part)-g.y(xCurr+part)) - (f.y(tmp)-g.y(tmp)));
