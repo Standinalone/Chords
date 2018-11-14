@@ -23,9 +23,9 @@
                   <MenuItem fx:id="menuItemScreen" mnemonicParsing="false" text="Сохранить отчет" onAction="#doScreen" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Помощь">
+          <Menu mnemonicParsing="false" text="Помощь" >
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="About" onAction="#doAbout" />
             </items>
           </Menu>
         </menus>

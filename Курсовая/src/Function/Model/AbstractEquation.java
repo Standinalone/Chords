@@ -47,18 +47,12 @@ public abstract class AbstractEquation {
 			for (double xCurr=from; xCurr<to; xCurr+=part) {
 				//System.out.println("Finding roots at "+xCurr+" "+(xCurr+part));
 				double xNext, tmp;
+				// Checks if F(a)*F(b)<0
 				if((f.y(xCurr)-g.y(xCurr))*(f.y(xCurr+part)-g.y(xCurr+part))<=0) {
-//Secant method
-//					do{
-//						tmp = xNext;
-//						xNext = xCurr - (f.y(xCurr)-g.y(xCurr))*(xPrev - xCurr) / ((f.y(xPrev)-g.y(xPrev)) - (f.y(xCurr)-g.y(xCurr)));
-//						xPrev=xCurr;
-//						xCurr = tmp;
-//					}while (Math.abs(xNext-xCurr)>eps);
 //Chords Method
 
-					double fstDer = Derivative.findDerivative(xCurr+part, func);
-					double sndDer = Derivative.findDerivative(xCurr+part, x->Derivative.findDerivative(x, func));
+					double fstDer = Derivative.findDerivative(xCurr, func);
+					double sndDer = Derivative.findDerivative(xCurr, x->Derivative.findDerivative(x, func));
 					//System.out.println(fstDer+" "+sndDer);
 					if (fstDer*sndDer<0) {
 						xNext = xCurr+part;
@@ -66,15 +60,15 @@ public abstract class AbstractEquation {
 							tmp = xNext;
 							xNext = tmp - (f.y(tmp)-g.y(tmp))*(tmp - xCurr) / ((f.y(tmp)-g.y(tmp)) - (f.y(xCurr)-g.y(xCurr)));
 							//System.out.println("xNext: "+xNext);
-						}while (Math.abs(xNext-tmp)>eps);
+						}while ((Math.abs(xNext-tmp)>eps)&&(tmp>xNext));
 					}
-					else {
+					else{
 						xNext = xCurr;
 						do{
 							tmp = xNext;
 							xNext = tmp - (f.y(tmp)-g.y(tmp))*(xCurr+part - tmp) / ((f.y(xCurr+part)-g.y(xCurr+part)) - (f.y(tmp)-g.y(tmp)));
 							//System.out.println("xNext: "+xNext);
-						}while (Math.abs(xNext-tmp)>eps);
+						}while ((Math.abs(xNext-tmp)>eps)&&(tmp<xNext));
 					}
 
 					//System.out.println(xNext);
@@ -116,14 +110,13 @@ public abstract class AbstractEquation {
 		g.addPoint(1, 4);
 		g.addPoint(2, 0);
 		g.addPoint(3, 4);
-		System.out.println(tf.setABC(x->3,g).solve(-5, 5, 0.0001, 10));
+		System.out.println(tf.setABC(x->3,g).solve(-5, 5, 0.0001, 100));
+		// Function has two roots f(x)=-x^2+1 g(x)=x^2-1
 		System.out.println(tf.setABC(x->-x*x+1,x->x*x-1).solve(-2, 2, 0.001, 2));
 
 		// Functions don't intercourse (f(x)=1, g(x)=2)
 		System.out.println(tf.setABC(x->1, x->2).solve(-1, 1, 0.001, 2));
 		// Normal work f(x)=x g(x)=-x
 		System.out.println(tf.setABC(x->x, x->-x).solve(-1, 1, 0.001, 2));
-		// Function has two roots f(x)=-x^2+1 g(x)=x^2-1
-		System.out.println(tf.setABC(x->-x*x+1, x->x*x-1).solve(-5, 5, 0.00001, 2));
 	}
 }

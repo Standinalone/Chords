@@ -1,9 +1,12 @@
 package GUI;
 
+import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -42,6 +45,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
 
@@ -257,13 +262,18 @@ public class GUIController implements Initializable {
         }  
 
 	}
+	@FXML public void doAbout(ActionEvent event) {
+        try {
+            Desktop.getDesktop().browse(new URI("http://www.google.com"));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
+	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		title = GUIFX.getStage().getTitle();
-		    
-        //defining the axes
-//        final NumberAxis xAxis = new NumberAxis();
-//        final NumberAxis yAxis = new NumberAxis();
         drawLines();
 	}
 }

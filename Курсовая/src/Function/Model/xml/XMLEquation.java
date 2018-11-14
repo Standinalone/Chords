@@ -151,7 +151,7 @@ public class XMLEquation extends AbstractEquation {
             out.printf("</table>%n");
             out.printf("<p>Формула: g(x) = " + getGFunction().getFormula() + "</p>");
             
-            solve(-5,5,0.00001,100);
+            solve(-10,10,0.00001,100);
             switch (getRoots().size()) {
                 case 0:
                     out.printf("<p>было установлено, что уравнение не имеет корней.%n</p>");
