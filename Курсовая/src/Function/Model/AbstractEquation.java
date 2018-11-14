@@ -40,9 +40,14 @@ public abstract class AbstractEquation {
 	}
 
 	public AbstractEquation solve(double from, double to, double eps, int n) {
+<<<<<<< HEAD
 		clearRoots();
+=======
+		roots =  new ArrayList<Double>();
+>>>>>>> refs/remotes/origin/master
 		if((f!=null)&&(g!=null)) {
 			double part = (to>=0?to-from:-from+to)/n; // finding the length of one part from n equal parts
+<<<<<<< HEAD
 			Derivative func = x->f.y(x)-g.y(x);
 			for (double xCurr=from; xCurr<to; xCurr+=part) {
 				//System.out.println("Finding roots at "+xCurr+" "+(xCurr+part));
@@ -74,6 +79,24 @@ public abstract class AbstractEquation {
 					//System.out.println(xNext);
 					if (!roots.contains(Double.valueOf(xNext))&&!Double.isNaN(xNext)) {
 						roots.add(Double.valueOf(xNext));
+=======
+			//System.out.println(whole);
+			for (double a=from; a<to; a+=part) {
+				//System.out.println("Finding roots at "+a+" "+(a+part));
+				double xPrev = a, xCurr = a+part;
+				double xNext=0, tmp = 0;
+				if((f.y(xPrev)-g.y(xPrev))*(f.y(xCurr)-g.y(xCurr))<=0) {
+					do{
+						tmp = xNext;
+						xNext = xCurr - (f.y(xCurr)-g.y(xCurr))*(xPrev - xCurr) / ((f.y(xPrev)-g.y(xPrev)) - (f.y(xCurr)-g.y(xCurr)));
+						xPrev=xCurr;
+						xCurr = tmp;
+					}while (Math.abs(xNext-xCurr)>eps);
+//					System.out.println(new DecimalFormat("#0.00").format(xNext));
+					Double result = Double.valueOf(xNext);
+					if (!roots.contains(result)&&!Double.isNaN(xNext)) {
+						roots.add(Double.valueOf(new DecimalFormat("#0.00").format(xNext)));
+>>>>>>> refs/remotes/origin/master
 					}
 				}
 			}
