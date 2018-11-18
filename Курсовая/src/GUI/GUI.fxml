@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.GUIController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="739.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.GUIController">
    <top>
       <MenuBar prefHeight="7.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <menus>
@@ -20,24 +20,24 @@
                   <MenuItem mnemonicParsing="false" onAction="#doOpen" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#doSave" text="Сохранить" />
               <MenuItem mnemonicParsing="false" onAction="#doExit" text="Выйти" />
-                  <MenuItem fx:id="menuItemScreen" mnemonicParsing="false" text="Сохранить отчет" onAction="#doScreen" />
+                  <MenuItem fx:id="menuItemScreen" mnemonicParsing="false" onAction="#doScreen" text="Сохранить отчет" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Помощь" >
+          <Menu mnemonicParsing="false" text="Помощь">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" onAction="#doAbout" />
+              <MenuItem mnemonicParsing="false" onAction="#doAbout" text="About" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
    </top>
    <left>
-      <AnchorPane maxWidth="-Infinity" prefWidth="226.0" BorderPane.alignment="BOTTOM_CENTER">
+      <AnchorPane maxWidth="-Infinity" prefHeight="457.0" prefWidth="228.0" BorderPane.alignment="BOTTOM_CENTER">
          <children>
-            <TableView fx:id="tableViewPoints" disable="true" layoutX="14.0" layoutY="292.0" prefHeight="177.0" prefWidth="199.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="292.0">
+            <TableView fx:id="tableViewPoints" editable="true" layoutX="14.0" layoutY="292.0" prefHeight="155.0" prefWidth="94.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="292.0">
               <columns>
-                <TableColumn fx:id="tableColumnX" text="X" />
-                <TableColumn fx:id="tableColumnY" minWidth="0.0" prefWidth="73.0" text="Y" />
+                <TableColumn fx:id="tableColumnX" editable="true" prefWidth="49.0" text="X" />
+                <TableColumn fx:id="tableColumnY" editable="true" minWidth="0.0" prefWidth="107.0" text="Y" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -46,18 +46,25 @@
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
             </TableView>
-            <TextField fx:id="textFieldG" layoutX="15.0" layoutY="144.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="197.0" promptText="-1, -1, 2, 2" />
-            <Label layoutX="15.0" layoutY="127.0" text="Точки g(x)" />
-            <TextField fx:id="textFieldF" layoutX="15.0" layoutY="95.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="196.0" promptText="1, 0, 0" />
-            <Label layoutX="14.0" layoutY="72.0" text="Коэффициенты f(x)" />
+<!--  <TextField fx:id="textFieldG" layoutX="256.0" layoutY="144.0" prefHeight="25.0" prefWidth="69.0" promptText="-1, -1, 2, 2" visible="false" onAction = "#dataChanged" />-->
+<!--  <TextField fx:id="textFieldF" layoutX="256.0" layoutY="115.0" prefHeight="25.0" prefWidth="54.0" promptText="1, 0, 0" visible="false" onAction = "#dataChanged"  />-->
+            <Label layoutX="15.0" layoutY="127.0" text="Добавить точку для g(x)" />
+            <Label layoutX="14.0" layoutY="72.0" text="Добавить коэффициент для f(x)" />
             <Label layoutX="15.0" layoutY="252.0" text="Список исходных точек для g(x)" />
             <Label layoutX="15.0" layoutY="187.0" text="Корни уравнения f(x)=g(x)" />
             <TextArea fx:id="textAreaRoots" editable="false" layoutX="14.0" layoutY="213.0" prefHeight="80.0" prefWidth="198.0" />
             <Label layoutX="13.0" layoutY="-10.0" prefHeight="49.0" prefWidth="201.0" text="Границы, число разбиений, eps" wrapText="true" />
-            <TextField fx:id="textFieldDivision" layoutX="103.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="40.0" promptText="100" />
-            <TextField fx:id="textFieldLeft" layoutX="13.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="35.0" promptText="-10" />
-            <TextField fx:id="textFieldRight" layoutX="53.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="38.0" promptText="10" />
-            <TextField fx:id="textFieldEps" layoutX="148.0" layoutY="37.0" onAction="#dataChanged" prefHeight="25.0" prefWidth="61.0" promptText="0.0001" />
+            <TextField fx:id="textFieldDivision" layoutX="103.0" layoutY="37.0" onAction="#drawLines" prefHeight="25.0" prefWidth="40.0" promptText="100" />
+            <TextField fx:id="textFieldLeft" layoutX="13.0" layoutY="37.0" onAction="#drawLines" prefHeight="25.0" prefWidth="35.0" promptText="-10" />
+            <TextField fx:id="textFieldRight" layoutX="53.0" layoutY="37.0" onAction="#drawLines" prefHeight="25.0" prefWidth="38.0" promptText="10" />
+            <TextField fx:id="textFieldEps" layoutX="148.0" layoutY="37.0" onAction="#drawLines" prefHeight="25.0" prefWidth="61.0" promptText="0.0001" />
+            <TextField fx:id="textFieldAddCoef" layoutX="13.0" layoutY="96.0" onAction="#doAddCoef" prefHeight="25.0" prefWidth="194.0" />
+            <TextField fx:id="textFieldAddPoint" layoutX="13.0" layoutY="150.0" onAction="#doAddPoint" prefHeight="25.0" prefWidth="195.0" />
+            <TableView fx:id="tableViewCoefs" editable="true" layoutX="111.0" layoutY="292.0" prefHeight="154.0" prefWidth="101.0" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="292.0">
+              <columns>
+                <TableColumn fx:id="tableColumnCoef" editable="true" prefWidth="100.0" sortable="false" text="Коэффициенты" />
+              </columns>
+            </TableView>
          </children>
       </AnchorPane>
    </left>

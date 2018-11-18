@@ -21,11 +21,16 @@ import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import Function.Model.AbstractFFunction;
 import Function.Model.AbstractGFunction;
+import Function.Model.xml.EquationData;
+import Function.Model.xml.EquationData.Coefs;
+import Function.Model.xml.EquationData.Coefs.Coef;
+import Function.Model.xml.EquationData.Points.XYCoef;
 import Function.Model.xml.XMLEquation;
 import Function.Model.xml.XMLEquation.FileReadException;
 import Function.Model.xml.XMLEquation.FileWriteException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,10 +42,12 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.WritableImage;
@@ -48,23 +55,32 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 public class GUIController implements Initializable {
 	XMLEquation equation = new XMLEquation("src/Function/Model/xml/samples/FourRoots.xml");
 	private String title;
+	private ObservableList<Coef> observableListF;
+	private ObservableList<XYCoef> observableListG;
 	@FXML Label formula;
 	@FXML LineChart<Number, Number> chart;
 	@FXML NumberAxis xAxis;
 	@FXML NumberAxis yAxis;
-	@FXML TableView tableViewTopics;
+	@FXML TableView<XYCoef> tableViewPoints;
+	@FXML TableView<Coef> tableViewCoefs;
 	@FXML TextArea textAreaRoots;
 	@FXML TextField textFieldLeft;
 	@FXML TextField textFieldRight;
 	@FXML TextField textFieldDivision;
 	@FXML TextField textFieldEps;
-	@FXML TextField textFieldF;
-	@FXML TextField textFieldG;
+//	@FXML TextField textFieldF;
+//	@FXML TextField textFieldG;
+	@FXML TextField textFieldAddCoef;
+	@FXML TextField textFieldAddPoint;
+	@FXML TableColumn<EquationData.Coefs.Coef, Double> tableColumnCoef;
+	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnX;
+	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnY;
 	@FXML BorderPane bp;
 	public static void main(String[] args) {
 		GUIFX.main(args);
@@ -77,9 +93,70 @@ public class GUIController implements Initializable {
         textFieldRight.clear();
         textFieldEps.clear();
         textFieldDivision.clear();
-        textFieldF.clear();
-        textFieldG.clear();
+//        textFieldF.clear();
+//        textFieldG.clear();
         textAreaRoots.clear();
+        updateCoefTable();
+        updatePointsTable();
+    }
+    @FXML public void doAddCoef() {
+    	equation.getFFunction().addCoef(Double.valueOf(textFieldAddCoef.getText()));
+    	textFieldAddCoef.setText(textFieldAddCoef.getPromptText());
+    	updateCoefTable();
+    	drawLines();
+    }
+    private void updateCoefTable() {
+        List<EquationData.Coefs.Coef> list = new ArrayList<>();
+        for (int i = 0; i < equation.getFFunction().getCoefCount(); i++) {
+            list.add(equation.getData().getCoefs().getCoef().get(i));
+        }
+        observableListF = FXCollections.observableList(list);
+        tableViewCoefs.setItems(observableListF);
+        
+        tableColumnCoef.setCellValueFactory(new PropertyValueFactory<>("Value"));
+        tableColumnCoef.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        tableColumnCoef.setOnEditCommit(t -> updateCoef(t));
+    }
+    private void updateCoef(CellEditEvent<EquationData.Coefs.Coef, Double> t) {
+        EquationData.Coefs.Coef f = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        f.setValue(t.getNewValue());
+        equation.clearRoots();
+        drawLines();
+    }
+    private void updateX(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
+        EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        g.setX(t.getNewValue());
+        equation.clearRoots();
+        drawLines();
+    }
+    private void updateY(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
+        EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        g.setY(t.getNewValue());
+        equation.clearRoots();
+        drawLines();
+    }
+    private void updatePointsTable() {
+        List<EquationData.Points.XYCoef> list = new ArrayList<>();
+        for (int i = 0; i < equation.getGFunction().getPointsCount(); i++) {
+            list.add(equation.getData().getPoints().getXYCoef().get(i));
+        }
+        observableListG = FXCollections.observableList(list);
+        tableViewPoints.setItems(observableListG);
+        
+        tableColumnX.setCellValueFactory(new PropertyValueFactory<>("X"));
+        tableColumnX.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        tableColumnX.setOnEditCommit(t -> updateX(t));
+        
+        tableColumnY.setCellValueFactory(new PropertyValueFactory<>("y"));
+        tableColumnY.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        tableColumnY.setOnEditCommit(t -> updateY(t));
+    }
+    @FXML public void doAddPoint() {
+		StringTokenizer st = new StringTokenizer(textFieldAddPoint.getText().isEmpty()?textFieldAddPoint.getPromptText():textFieldAddPoint.getText(),",");
+		equation.getGFunction().addPoint(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+		textFieldAddPoint.setText(textFieldAddPoint.getPromptText());
+    	updatePointsTable();
+    	drawLines();
     }
     @FXML public void doScreen() {
         
@@ -91,9 +168,9 @@ public class GUIController implements Initializable {
                 new FileChooser.ExtensionFilter("Все файлы (*.*)", "*.*"));
         fileChooser.setTitle("Составить отчет");
         File file;
-        // Encoding an image (the screen of a BorderPane) to Base64 format and generating report
+        // Encoding image (the screen of a LineChart) to Base64 format and generating report
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        WritableImage image = bp.snapshot(new SnapshotParameters(), null);
+        WritableImage image = chart.snapshot(new SnapshotParameters(), null);
         
         if ((file = fileChooser.showSaveDialog(null)) != null) {
             try {
@@ -108,25 +185,25 @@ public class GUIController implements Initializable {
             }
         }
     }
-	@FXML public void dataChanged(ActionEvent event) {
-		equation.clearEquation();
-		
-		StringTokenizer st;
-		// Parsing coefficient values for f(x)
-		st = new StringTokenizer(textFieldF.getText().isEmpty()?textFieldF.getPromptText():textFieldF.getText(),",");
-		while (st.hasMoreTokens()) {
-			equation.getFFunction().addCoef(Double.parseDouble(st.nextToken()));
-			//System.out.print(st.nextToken()+' ');
-		}
-		System.out.println();
-		// Parsing points for g(x)
-		st = new StringTokenizer(textFieldG.getText().isEmpty()?textFieldG.getPromptText():textFieldG.getText(),",");
-		while (st.hasMoreTokens()) {
-			equation.getGFunction().addPoint(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
-			//System.out.print(st.nextToken()+' ');
-		}
-        drawLines();
-    }
+//	@FXML public void dataChanged(ActionEvent event) {
+//		equation.clearEquation();
+//		
+//		StringTokenizer st;
+//		// Parsing coefficient values for f(x)
+//		st = new StringTokenizer(textFieldF.getText().isEmpty()?textFieldF.getPromptText():textFieldF.getText(),",");
+//		while (st.hasMoreTokens()) {
+//			equation.getFFunction().addCoef(Double.parseDouble(st.nextToken()));
+//			//System.out.print(st.nextToken()+' ');
+//		}
+//		System.out.println();
+//		// Parsing points for g(x)
+//		st = new StringTokenizer(textFieldG.getText().isEmpty()?textFieldG.getPromptText():textFieldG.getText(),",");
+//		while (st.hasMoreTokens()) {
+//			equation.getGFunction().addPoint(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+//			//System.out.print(st.nextToken()+' ');
+//		}
+//        drawLines();
+//    }
 
     @FXML public void doNew(ActionEvent event) {
     	GUIFX.getStage().setTitle(title+" - Новый");
@@ -187,6 +264,7 @@ public class GUIController implements Initializable {
 	        }
 	}
 	public void drawLines(){
+		equation.clearRoots();
 		chart.getData().clear();
 		XYChart.Series fX = new XYChart.Series();
         XYChart.Series gX = new XYChart.Series();
@@ -222,7 +300,6 @@ public class GUIController implements Initializable {
 		xAxis.setAutoRanging(false);
 	    xAxis.setTickUnit(1);
 	    yAxis.setAutoRanging(false);
-	    yAxis.setTickUnit(1);
 	    //
 	    
 		if (rootsX.size()>0) {
@@ -232,26 +309,30 @@ public class GUIController implements Initializable {
 		    yAxis.setLowerBound(Math.round((rootsY.get(0)-5)));
 		    yAxis.setUpperBound(Math.round(rootsY.get(rootsY.size()-1)+5));
 		}
+	    yAxis.setTickUnit(Math.round((yAxis.getUpperBound()-yAxis.getLowerBound())/50));
 	    
 	    
 		formula.setText("f(x) = "+equation.getFFunction().getFormula()+"\n"+
 				"g(x) = "+equation.getGFunction().getFormula());
 		
-		String str="";
+//		String str="";
 		for (double i=left; i<right; i+=0.1) {
 			fX.getData().add(new XYChart.Data(i, equation.getFFunction().y(i)));
 			gX.getData().add(new XYChart.Data(i, equation.getGFunction().y(i)));
 		}
 		for (int i = 0; i<equation.getGFunction().getPointsCount(); i++) {
 			input.getData().add(new XYChart.Data(equation.getGFunction().getX(i),equation.getGFunction().getY(i)));
-			str+=equation.getGFunction().getX(i)+","+equation.getGFunction().getY(i)+", ";
 		}
-		textFieldG.setText(str.substring(0, str.length() - 2));
-		str="";
-		for (int i = 0; i<equation.getFFunction().getCoefCount(); i++) {
-			str+=equation.getFFunction().getCoef(i)+", ";
-		}
-		textFieldF.setText(str.substring(0, str.length() - 2));
+//		for (int i = 0; i<equation.getGFunction().getPointsCount(); i++) {
+//			input.getData().add(new XYChart.Data(equation.getGFunction().getX(i),equation.getGFunction().getY(i)));
+//			str+=equation.getGFunction().getX(i)+","+equation.getGFunction().getY(i)+", ";
+//		}
+//		textFieldG.setText(str.substring(0, str.length() - 2));
+//		str="";
+//		for (int i = 0; i<equation.getFFunction().getCoefCount(); i++) {
+//			str+=equation.getFFunction().getCoef(i)+", ";
+//		}
+//		textFieldF.setText(str.substring(0, str.length() - 2));
         try {
         	chart.getData().add(fX);
         	chart.getData().add(gX);
@@ -274,6 +355,8 @@ public class GUIController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		title = GUIFX.getStage().getTitle();
+		updateCoefTable();
+		updatePointsTable();
         drawLines();
 	}
 }
