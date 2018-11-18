@@ -17,14 +17,17 @@ public abstract class AbstractGFunction implements ExtendedFunction {
 	    double[] rhsArray = new double[martrixSize];
 	    for (int i=0; i<martrixSize;i++) { 
 	    	for (int j=0; j<martrixSize; j++) {
-	    		lhsArray[i][j]=Math.pow(getX(i),j); // Creating Matrix of Xs (left-hand side)
+	    		// Creating Matrix of Xs (left-hand side)
+	    		lhsArray[i][j]=Math.pow(getX(i),j); 
 	    	}
-	    	rhsArray[i]=getY(i); // Creating Matrix of Ys (rifht-hand side)
-	    	//System.out.println(points[i*2+1]);
+	    	// Creating Matrix of Ys (rifht-hand side)
+	    	rhsArray[i]=getY(i); 
 	    }
+	    // Resolving the linear system with the JAMA library (obtaining coefficients)
 	    Matrix lhs = new Matrix(lhsArray);
 	    Matrix rhs = new Matrix(rhsArray, martrixSize);
 	    Matrix ans = lhs.solve(rhs);
+	    // Getting rid of the sign preceding the first coefficient
 	    String str=new DecimalFormat("0.00").format(ans.get(ans.getRowDimension()-1, 0))+"x^"+(ans.getRowDimension()-1);
 	    DecimalFormat fmt = new DecimalFormat(" + #,##0.00; - #");
 	    for (int i=ans.getRowDimension()-2; i>0; i--) {
@@ -36,7 +39,8 @@ public abstract class AbstractGFunction implements ExtendedFunction {
 	
 	@Override
 	public double applyAsDouble(double x) {
-		double polynomial=0;		
+		// Finding Lagrange's polynomial
+		double polynomial=0;
 		for (int i=0; i<getPointsCount(); i++) {
 			double basis_polynomial = 1;
 			for (int j=0; j<getPointsCount(); j++) {

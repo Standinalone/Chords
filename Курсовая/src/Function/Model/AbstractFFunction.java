@@ -10,9 +10,8 @@ public abstract class AbstractFFunction implements ExtendedFunction {
 	
 	public String getFormula() {
 		String formula = "";
-		if (getCoefCount()>1) formula=new DecimalFormat("0.00").format(getCoef(0))+"x^"+(getCoefCount()-1);
 		DecimalFormat fmt = new DecimalFormat(" + #,##0.0; - #");
-		for (int i=1; i<getCoefCount()-1; i++) {
+		for (int i=0; i<getCoefCount()-1; i++) {
 			formula += fmt.format(getCoef(i)) + "x^" + (getCoefCount()-i-1);
 		}
 		formula += fmt.format(getCoef(getCoefCount()-1));
@@ -28,5 +27,4 @@ public abstract class AbstractFFunction implements ExtendedFunction {
 		result+=getCoef(getCoefCount()-1);
 		return result;
 	}
-
 }

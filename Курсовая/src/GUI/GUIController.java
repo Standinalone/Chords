@@ -132,7 +132,7 @@ public class GUIController implements Initializable {
     	GUIFX.getStage().setTitle(title+" - Новый");
     	equation = new XMLEquation("src/Function/Model/xml/samples/blank.xml");
     	updateView();
-    	drawLines();
+    	chart.getData().clear();
     }
     public static FileChooser getFileChooser(String title) {
         FileChooser fileChooser = new FileChooser();

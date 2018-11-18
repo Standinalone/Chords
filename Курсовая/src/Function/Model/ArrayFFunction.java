@@ -1,7 +1,6 @@
 package Function.Model;
 
 public class ArrayFFunction extends AbstractFFunction {
-
 	private double[] coefs;
 	public ArrayFFunction(double... coefs) {
 		this.coefs = coefs;

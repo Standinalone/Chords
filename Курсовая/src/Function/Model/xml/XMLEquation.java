@@ -10,6 +10,7 @@ import Function.Model.AbstractFFunction;
 import Function.Model.AbstractGFunction;
 
 public class XMLEquation extends AbstractEquation {
+	private EquationData data;
 
 	@SuppressWarnings("serial")
     public static class FileException extends Exception {
@@ -36,9 +37,7 @@ public class XMLEquation extends AbstractEquation {
             super(fileName);
         }
     }
-       
-    private EquationData data;
-
+    
     public XMLEquation() {
         clearEquation();
     }
@@ -56,6 +55,10 @@ public class XMLEquation extends AbstractEquation {
 //		data = new EquationData();
 //        setF(new XMLFFunction(data));
 //        setG(new XMLGFunction(data));
+//        data.coefs = new EquationData.Coefs();
+//        data.coefs.coef = new ArrayList<>();
+//        data.points = new EquationData.Points();
+//        data.points.xyCoef = new ArrayList<>();
     	try {
 			return readFromFile("src/Function/Model/xml/samples/blank.xml");
 		} catch (FileReadException e) {
@@ -104,8 +107,7 @@ public class XMLEquation extends AbstractEquation {
     }
     
     public XMLEquation saveReport(String fileName, String imageName) throws FileWriteException {
-        try (PrintWriter out = new PrintWriter(
-          new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"))) {
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"))) {
             out.printf("<html>%n");
 
             out.printf("<head>%n");

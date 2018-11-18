@@ -9,7 +9,7 @@ public interface ExtendedFunction extends DoubleUnaryOperator{
 	
 	default String test (String argName, String funcName, double from, double to, double step) {
 		StringBuilder sb = new StringBuilder();
-		for (double x = from; x<to; x+=step) {
+		for (double x = from; x<=to; x+=step) {
 			sb.append(String.format(argName + " = %.4f " + funcName + "(" + argName + ") = %.4f ",x,y(x)));
 		}
 		return sb.toString();

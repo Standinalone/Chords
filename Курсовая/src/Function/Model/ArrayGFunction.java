@@ -32,7 +32,6 @@ public class ArrayGFunction extends AbstractGFunction{
 		points = Arrays.copyOf(points, points.length+2);
 		points[points.length-2]=x;
 		points[points.length-1]=y;
-		
 	}
 
 	@Override

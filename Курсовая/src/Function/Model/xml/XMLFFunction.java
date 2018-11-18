@@ -27,7 +27,6 @@ public class XMLFFunction extends AbstractFFunction{
 	
 	@Override
 	public void addCoef(double coef) {
-		//if ((coefs.getCoef())==null) {coefs.getCoef(). = new AbstractList<Coef>};
 		Coef tmp = new Coef();
 		tmp.setIndex(coefs.getCoef().size());
 		tmp.setValue(coef);
