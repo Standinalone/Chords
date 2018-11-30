@@ -1,28 +1,18 @@
 package GUI;
 
-import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.JAXBException;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
-
-import Function.Model.AbstractFFunction;
-import Function.Model.AbstractGFunction;
 import Function.Model.xml.EquationData;
-import Function.Model.xml.EquationData.Coefs;
 import Function.Model.xml.EquationData.Coefs.Coef;
 import Function.Model.xml.EquationData.Points.XYCoef;
 import Function.Model.xml.XMLEquation;
@@ -36,7 +26,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -47,16 +36,23 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
+
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 public class GUIController implements Initializable {
 	XMLEquation equation = new XMLEquation("src/Function/Model/xml/samples/FourRoots.xml");
@@ -74,14 +70,14 @@ public class GUIController implements Initializable {
 	@FXML TextField textFieldRight;
 	@FXML TextField textFieldDivision;
 	@FXML TextField textFieldEps;
-//	@FXML TextField textFieldF;
-//	@FXML TextField textFieldG;
 	@FXML TextField textFieldAddCoef;
-	@FXML TextField textFieldAddPoint;
+	@FXML TextField textFieldAddPointX;
+	@FXML TextField textFieldAddPointY;
 	@FXML TableColumn<EquationData.Coefs.Coef, Double> tableColumnCoef;
 	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnX;
 	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnY;
 	@FXML BorderPane bp;
+	@FXML WebView web;
 	public static void main(String[] args) {
 		GUIFX.main(args);
 	}
@@ -118,22 +114,50 @@ public class GUIController implements Initializable {
         tableColumnCoef.setOnEditCommit(t -> updateCoef(t));
     }
     private void updateCoef(CellEditEvent<EquationData.Coefs.Coef, Double> t) {
+    	//equation.getData().getCoefs().
+    	//t.getTableView().getItems().get
         EquationData.Coefs.Coef f = t.getTableView().getItems().get(t.getTablePosition().getRow());
-        f.setValue(t.getNewValue());
+    	if (t.getNewValue()!=null) {
+	        f.setValue(t.getNewValue());
+    	}
+    	else
+    	{
+	        f.setValue(0);
+    	}
+        updateCoefTable();
         equation.clearRoots();
         drawLines();
     }
     private void updateX(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
         EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
-        g.setX(t.getNewValue());
+        if (t.getNewValue()!=null) {
+        	boolean lock=true;
+        	for (int i =0; i<equation.getGFunction().getPointsCount(); i++) {
+        		if (equation.getGFunction().getX(i)==t.getNewValue()) lock=false;
+        	}
+	        if (lock) g.setX(t.getNewValue());
+    	}
+    	else
+    	{
+    		equation.getGFunction().removePoint(t.getTablePosition().getRow());
+    	}
+    	updatePointsTable();
         equation.clearRoots();
         drawLines();
     }
     private void updateY(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
         EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
-        g.setY(t.getNewValue());
+    	if (t.getNewValue()!=null) {
+	        g.setY(t.getNewValue());
+    	}
+    	else
+    	{
+    		equation.getGFunction().removePoint(t.getTablePosition().getRow());
+    	}
+    	updatePointsTable();
         equation.clearRoots();
         drawLines();
+    	
     }
     private void updatePointsTable() {
         List<EquationData.Points.XYCoef> list = new ArrayList<>();
@@ -152,11 +176,18 @@ public class GUIController implements Initializable {
         tableColumnY.setOnEditCommit(t -> updateY(t));
     }
     @FXML public void doAddPoint() {
-		StringTokenizer st = new StringTokenizer(textFieldAddPoint.getText().isEmpty()?textFieldAddPoint.getPromptText():textFieldAddPoint.getText(),",");
-		equation.getGFunction().addPoint(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
-		textFieldAddPoint.setText(textFieldAddPoint.getPromptText());
-    	updatePointsTable();
-    	drawLines();
+    	boolean lock=true;
+    	for (int i=0; i<equation.getGFunction().getPointsCount(); i++) {
+    		if (equation.getGFunction().getX(i)==Double.parseDouble(textFieldAddPointX.getText())) lock=false;
+    	}
+        
+    	if(lock&&!textFieldAddPointX.getText().equals("")&&!textFieldAddPointY.getText().equals("")) {
+			equation.getGFunction().addPoint(Double.parseDouble(textFieldAddPointX.getText()),Double.parseDouble(textFieldAddPointY.getText()));
+			textFieldAddPointX.setText(textFieldAddPointX.getPromptText());
+			textFieldAddPointY.setText(textFieldAddPointY.getPromptText());
+	    	updatePointsTable();
+	    	drawLines();
+    	}
     }
     @FXML public void doScreen() {
         
@@ -179,34 +210,27 @@ public class GUIController implements Initializable {
             	String base64 = Base64.getEncoder().encodeToString(os.toByteArray());
             	equation.saveReport(file.getCanonicalPath(), base64);
                 showMessage("Отчет сохранен");
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Подтверждение");
+                alert.setHeaderText("");
+                alert.setContentText("Открыть отчет?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    showReport(file);
+                }
             }
             catch (IOException | FileWriteException e) {
                 showError("Ошибка записи");
             }
         }
     }
-//	@FXML public void dataChanged(ActionEvent event) {
-//		equation.clearEquation();
-//		
-//		StringTokenizer st;
-//		// Parsing coefficient values for f(x)
-//		st = new StringTokenizer(textFieldF.getText().isEmpty()?textFieldF.getPromptText():textFieldF.getText(),",");
-//		while (st.hasMoreTokens()) {
-//			equation.getFFunction().addCoef(Double.parseDouble(st.nextToken()));
-//			//System.out.print(st.nextToken()+' ');
-//		}
-//		System.out.println();
-//		// Parsing points for g(x)
-//		st = new StringTokenizer(textFieldG.getText().isEmpty()?textFieldG.getPromptText():textFieldG.getText(),",");
-//		while (st.hasMoreTokens()) {
-//			equation.getGFunction().addPoint(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
-//			//System.out.print(st.nextToken()+' ');
-//		}
-//        drawLines();
-//    }
-
-    @FXML public void doNew(ActionEvent event) {
-    	GUIFX.getStage().setTitle(title+" - Новый");
+    private void showReport(File file) {
+        GUIFX.getBrowser().getEngine().load(file.toURI().toString());
+        GUIFX.getWebStage().show();
+    }
+	@FXML public void doNew(ActionEvent event) {
+    	GUIFX.getPrimaryStage().setTitle(title+" - Новый");
     	equation = new XMLEquation("src/Function/Model/xml/samples/blank.xml");
     	updateView();
     	chart.getData().clear();
@@ -253,7 +277,7 @@ public class GUIController implements Initializable {
 	        File file;
 	        if ((file = fileChooser.showOpenDialog(null)) != null) {
 	            try {
-	            	GUIFX.getStage().setTitle(title+" - "+file.getName());
+	            	GUIFX.getPrimaryStage().setTitle(title+" - "+file.getName());
 	                equation.readFromFile(file.getCanonicalPath());
 	                updateView();
 	                drawLines();
@@ -273,34 +297,28 @@ public class GUIController implements Initializable {
         gX.setName("График g(x)");
         input.setName("Исходные точки g(x)");
         
-        
-        
 		// if textFields have no text sets the parameters to the prompt properties of corresponding fields
 		double left = textFieldLeft.getText().isEmpty()?Double.parseDouble(textFieldLeft.getPromptText()):Double.parseDouble(textFieldLeft.getText());
 		double right = textFieldRight.getText().isEmpty()?Double.parseDouble(textFieldRight.getPromptText()):Double.parseDouble(textFieldRight.getText());
 		int n = textFieldDivision.getText().isEmpty()?Integer.parseInt(textFieldDivision.getPromptText()):Integer.parseInt(textFieldDivision.getText());
 		double eps = textFieldEps.getText().isEmpty()?Double.parseDouble(textFieldEps.getPromptText()):Double.parseDouble(textFieldEps.getText()); 
 		
-		
 		List<Double> rootsX = equation.solve(left, right, eps, n).getRoots();
+		//System.out.println(equation.solve(left, right, eps, n));
 		List<Double> rootsY = new ArrayList<Double>();
 		for (Double rootX : rootsX) {
 			rootsY.add(equation.getFFunction().y(rootX));
 		}
 		java.util.Collections.sort(rootsY);
-		//System.out.println(rootsY);
 		String result="";
 		for (Double root : rootsX) {
 			result+=(new String().format("%.2f       %.2f\n",root, equation.getFFunction().y(root)));
-			//result+=(root+"\n");
 		}
 		textAreaRoots.setText(result);
-		//textAreaRoots.setText(rootsX.toString());
 
 		xAxis.setAutoRanging(false);
 	    xAxis.setTickUnit(1);
 	    yAxis.setAutoRanging(false);
-	    //
 	    
 		if (rootsX.size()>0) {
 		    xAxis.setLowerBound(left);
@@ -311,11 +329,9 @@ public class GUIController implements Initializable {
 		}
 	    yAxis.setTickUnit(Math.round((yAxis.getUpperBound()-yAxis.getLowerBound())/50));
 	    
-	    
 		formula.setText("f(x) = "+equation.getFFunction().getFormula()+"\n"+
 				"g(x) = "+equation.getGFunction().getFormula());
-		
-//		String str="";
+
 		for (double i=left; i<right; i+=0.1) {
 			fX.getData().add(new XYChart.Data(i, equation.getFFunction().y(i)));
 			gX.getData().add(new XYChart.Data(i, equation.getGFunction().y(i)));
@@ -323,16 +339,6 @@ public class GUIController implements Initializable {
 		for (int i = 0; i<equation.getGFunction().getPointsCount(); i++) {
 			input.getData().add(new XYChart.Data(equation.getGFunction().getX(i),equation.getGFunction().getY(i)));
 		}
-//		for (int i = 0; i<equation.getGFunction().getPointsCount(); i++) {
-//			input.getData().add(new XYChart.Data(equation.getGFunction().getX(i),equation.getGFunction().getY(i)));
-//			str+=equation.getGFunction().getX(i)+","+equation.getGFunction().getY(i)+", ";
-//		}
-//		textFieldG.setText(str.substring(0, str.length() - 2));
-//		str="";
-//		for (int i = 0; i<equation.getFFunction().getCoefCount(); i++) {
-//			str+=equation.getFFunction().getCoef(i)+", ";
-//		}
-//		textFieldF.setText(str.substring(0, str.length() - 2));
         try {
         	chart.getData().add(fX);
         	chart.getData().add(gX);
@@ -344,17 +350,11 @@ public class GUIController implements Initializable {
 
 	}
 	@FXML public void doAbout(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(new URI("http://www.google.com"));
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        }
+		showMessage("Курсовая работа. 2 курс\nПоиск корней методом хорд");
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		title = GUIFX.getStage().getTitle();
+		title = GUIFX.getPrimaryStage().getTitle();
 		updateCoefTable();
 		updatePointsTable();
         drawLines();

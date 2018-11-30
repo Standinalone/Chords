@@ -10,6 +10,7 @@ public abstract class AbstractGFunction implements ExtendedFunction {
 	public abstract void setPoint(double x, double y, int i);
 	public abstract void addPoint(double x, double y);
 	public abstract int getPointsCount();
+	public abstract void removePoint(int row);
 	
 	public String getFormula() {
 		int martrixSize = getPointsCount();

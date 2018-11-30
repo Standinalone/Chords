@@ -44,6 +44,10 @@ public class XMLGFunction extends AbstractGFunction{
 		return points.getXYCoef().size();
 	}
 
+	@Override
+	public void removePoint(int row) {
+		points.getXYCoef().remove(row);
+	}
 	public static void main(String[] args) {
 		// Normal work
 		System.out.println(new ArrayGFunction(-5,-5, 3,3).test("a", "f", -2, 2, 1));

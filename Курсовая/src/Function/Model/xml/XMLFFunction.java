@@ -28,10 +28,14 @@ public class XMLFFunction extends AbstractFFunction{
 	@Override
 	public void addCoef(double coef) {
 		Coef tmp = new Coef();
-		tmp.setIndex(coefs.getCoef().size());
+		tmp.setIndex(0);
 		tmp.setValue(coef);
-		coefs.getCoef().add(tmp);
+		coefs.getCoef().add(0,tmp);
+		for (int i =0; i<coefs.getCoef().size();i++) {
+			coefs.getCoef().get(i).setIndex(i);
+		}
 	}
+
 	
 	public static void main(String[] args) {
 		// y=x

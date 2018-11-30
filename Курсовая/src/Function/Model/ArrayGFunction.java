@@ -38,6 +38,11 @@ public class ArrayGFunction extends AbstractGFunction{
 	public int getPointsCount() {
 		return points.length/2;
 	}
+	@Override
+	public void removePoint(int row) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public static void main(String[] args) {
 		// Normal work

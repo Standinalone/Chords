@@ -1,14 +1,14 @@
 package Function.Model;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.DoubleStream;
 
 public abstract class AbstractEquation {
 	private ExtendedFunction f;
 	private ExtendedFunction g;
 	private List<Double> roots;
+	// The function h(x) we need to solve
+	private ExtendedFunction h = x->f.y(x)-g.y(x);
+	double pace = -0.000001;
 	
 	public AbstractEquation clearRoots() {
 		roots = new ArrayList<Double>();
@@ -41,40 +41,63 @@ public abstract class AbstractEquation {
 
 	public AbstractEquation solve(double from, double to, double eps, int n) {
 		if((f!=null)&&(g!=null)) {
-			// The function h(x) we need to solve
-			ExtendedFunction h = x->f.y(x)-g.y(x);
+			final double part = (to-from)/n;
+			//Checking for equal functions
+			double xCurr=from;
+			for (; xCurr<=to; xCurr+=part) {
+				if (Math.round(h.y(xCurr)*100000)/100000!=0) break;
+			}
+			if (xCurr>=to) {
+				roots.add(Double.POSITIVE_INFINITY);;
+				return this;
+			}
+			//Copy of the main function h(x)
+			ExtendedFunction h_copy = h;
 			// Finding the length of one part from n equal parts
-			double part = (to-from)/n;
-			// Defining a functional interfaces to find 1st and 2nd derivatives
-			ExtendedFunction der1 = x->(h.y(x+0.0000001)-h.y(x))/0.0000001;
-			ExtendedFunction der2 = x->(der1.y(x+0.0000001)-der1.y(x))/0.0000001;
-			for (double xCurr=from; xCurr<to; xCurr+=part) {
-				double xNext, tmp;
-				// Checks if h(a)*h(b)<0
-				if(h.y(xCurr)*h.y(xCurr+part)<=0) {
-					//Chord Method
-					double fstDer = der1.y(xCurr);
-					double sndDer = der2.y(xCurr);
-					if (fstDer*sndDer<0) {
-						xNext = xCurr+part;
-						do{
-							tmp = xNext;
-							xNext = tmp - (h.y(tmp))*(tmp - xCurr) / (h.y(tmp) - h.y(xCurr));
-						}while ((Math.abs(xNext-tmp)>eps)&&(tmp>xNext));
-					}
-					else{
-						xNext = xCurr;
-						do{
-							tmp = xNext;
-							xNext = tmp - (h.y(tmp))*(xCurr+part - tmp) / (h.y(xCurr+part) - h.y(tmp));
-						}while ((Math.abs(xNext-tmp)>eps)&&(tmp<xNext));
-					}
-					// Eliminating unnecessary roots and adding new to the list of roots
-					if (!roots.contains(Double.valueOf(xNext))&&!Double.isNaN(xNext)) {
-						roots.add(Double.valueOf(xNext));
+			final double pace_copy=pace;
+			for (; pace<=0.000001; pace+=0.000001) {
+				h=x->h_copy.y(x)+pace;
+				// Defining a functional interfaces to find 1st and 2nd derivatives
+				ExtendedFunction der1 = x->(h.y(x+0.0000001)-h.y(x))/0.0000001;
+				ExtendedFunction der2 = x->(der1.y(x+0.0000001)-der1.y(x))/0.0000001;
+				for (xCurr=from; xCurr<to; xCurr+=part) {
+					double xNext, tmp;
+					// Checks if h(a)*h(b)<0
+					if(h.y(xCurr)*h.y(xCurr+part)<=0) {
+						//Chord Method
+						double fstDer = der1.y(xCurr);
+						double sndDer = der2.y(xCurr);
+						if (fstDer*sndDer<0) {
+							xNext = xCurr+part;
+							do{
+								tmp = xNext;
+								xNext = tmp - (h.y(tmp))*(tmp - xCurr) / (h.y(tmp) - h.y(xCurr));
+							}while ((Math.abs(xNext-tmp)>eps)&&(tmp>xNext));
+						}
+						else{
+							xNext = xCurr;
+							do{
+								tmp = xNext;
+								xNext = tmp - (h.y(tmp))*(xCurr+part - tmp) / (h.y(xCurr+part) - h.y(tmp));
+							}while ((Math.abs(xNext-tmp)>eps)&&(tmp<xNext));
+						}
+						// Eliminating unnecessary roots and adding new to the list of roots
+						//System.out.println(xNext);
+						if (!roots.contains(Double.valueOf(xNext))&&!Double.isNaN(xNext)) {
+							boolean lock=true;
+							for (double root : roots) {
+								if (Math.abs(xNext-root)<0.001) {
+									lock=false;
+									break;
+								}
+							}
+							//System.out.println(xNext);
+							if(lock) roots.add(Double.valueOf(xNext));
+						}
 					}
 				}
 			}
+			pace=pace_copy;
 		}
 		return this;
 	}
@@ -94,6 +117,7 @@ public abstract class AbstractEquation {
 		class TestFunction extends AbstractEquation{}
 		
 		TestFunction tf = new TestFunction();
+		System.out.println(tf.setABC(x->x*x,x->0).solve(-5, 5, 0.0001, 100));
 		// The function wasn't solved
 		System.out.println(tf);
 		// The functions f and g weren't set
@@ -114,5 +138,7 @@ public abstract class AbstractEquation {
 		System.out.println(tf.setABC(x->1, x->2).solve(-1, 1, 0.001, 2));
 		// Normal work f(x)=x g(x)=-x
 		System.out.println(tf.setABC(x->x, x->-x).solve(-1, 1, 0.001, 2));
+		// Two functions merge
+		System.out.println(tf.setABC(x->1,x->1).solve(-5, 5, 0.0001, 100));
 	}
 }
