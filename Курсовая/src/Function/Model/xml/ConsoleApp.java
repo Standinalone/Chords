@@ -20,8 +20,8 @@ public class ConsoleApp {
         equation.saveReport("Отчеты/TwoRoots.html", null);
         // 5. Creating an equation from scratch
         equation.clearEquation();
-        equation.getFFunction().addCoef(2); // f(x) = 2
-        equation.getFFunction().addCoef(0); // f(x) = 2x + 0
+        equation.getFFunction().addCoef(0); // f(x) = 0
+        equation.getFFunction().addCoef(2); // f(x) = 2x + 0
         equation.getGFunction().addPoint(1, 1);
         equation.getGFunction().addPoint(2, 1);  // g(x) = 1 
         System.out.println(equation.solve(-5,5,0.0001,10));

@@ -45,15 +45,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.util.converter.DoubleStringConverter;
 
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-
 public class GUIController implements Initializable {
 	XMLEquation equation = new XMLEquation("src/Function/Model/xml/samples/FourRoots.xml");
 	private String title;
@@ -77,9 +68,11 @@ public class GUIController implements Initializable {
 	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnX;
 	@FXML TableColumn<EquationData.Points.XYCoef, Double> tableColumnY;
 	@FXML BorderPane bp;
-	@FXML WebView web;
 	public static void main(String[] args) {
 		GUIFX.main(args);
+	}
+	@FXML public void doAbout(ActionEvent event) {
+		showMessage("Курсовая работа. 2 курс\nПоиск корней методом хорд");
 	}
     public void doExit(ActionEvent event) {
         Platform.exit();
@@ -89,8 +82,6 @@ public class GUIController implements Initializable {
         textFieldRight.clear();
         textFieldEps.clear();
         textFieldDivision.clear();
-//        textFieldF.clear();
-//        textFieldG.clear();
         textAreaRoots.clear();
         updateCoefTable();
         updatePointsTable();
@@ -114,8 +105,7 @@ public class GUIController implements Initializable {
         tableColumnCoef.setOnEditCommit(t -> updateCoef(t));
     }
     private void updateCoef(CellEditEvent<EquationData.Coefs.Coef, Double> t) {
-    	//equation.getData().getCoefs().
-    	//t.getTableView().getItems().get
+        // Checking if a new coefficient value doens't equal to null else sets it to 0.0
         EquationData.Coefs.Coef f = t.getTableView().getItems().get(t.getTablePosition().getRow());
     	if (t.getNewValue()!=null) {
 	        f.setValue(t.getNewValue());
@@ -130,6 +120,7 @@ public class GUIController implements Initializable {
     }
     private void updateX(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
         EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        // Checking if a new X value doens't equal to null else removes the whole point and updates data
         if (t.getNewValue()!=null) {
         	boolean lock=true;
         	for (int i =0; i<equation.getGFunction().getPointsCount(); i++) {
@@ -147,6 +138,7 @@ public class GUIController implements Initializable {
     }
     private void updateY(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
         EquationData.Points.XYCoef g = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        // Checking if a new Y value doens't equal to null else removes the whole point and updates data
     	if (t.getNewValue()!=null) {
 	        g.setY(t.getNewValue());
     	}
@@ -167,6 +159,7 @@ public class GUIController implements Initializable {
         observableListG = FXCollections.observableList(list);
         tableViewPoints.setItems(observableListG);
         
+        // Setting corresponding parameters to columns
         tableColumnX.setCellValueFactory(new PropertyValueFactory<>("X"));
         tableColumnX.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         tableColumnX.setOnEditCommit(t -> updateX(t));
@@ -176,6 +169,7 @@ public class GUIController implements Initializable {
         tableColumnY.setOnEditCommit(t -> updateY(t));
     }
     @FXML public void doAddPoint() {
+    	// Boolean variable to prevent from creating a point with existing X value
     	boolean lock=true;
     	for (int i=0; i<equation.getGFunction().getPointsCount(); i++) {
     		if (equation.getGFunction().getX(i)==Double.parseDouble(textFieldAddPointX.getText())) lock=false;
@@ -210,6 +204,7 @@ public class GUIController implements Initializable {
             	String base64 = Base64.getEncoder().encodeToString(os.toByteArray());
             	equation.saveReport(file.getCanonicalPath(), base64);
                 showMessage("Отчет сохранен");
+                // Creating confirmation dialog to show the report
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Подтверждение");
                 alert.setHeaderText("");
@@ -226,6 +221,7 @@ public class GUIController implements Initializable {
         }
     }
     private void showReport(File file) {
+    	// Getting Browser and WebView from GUIFX class and opening the WebView
         GUIFX.getBrowser().getEngine().load(file.toURI().toString());
         GUIFX.getWebStage().show();
     }
@@ -297,14 +293,13 @@ public class GUIController implements Initializable {
         gX.setName("График g(x)");
         input.setName("Исходные точки g(x)");
         
-		// if textFields have no text sets the parameters to the prompt properties of corresponding fields
+		// if textFields have no text sets the parameters to the prompt properties of the corresponding fields
 		double left = textFieldLeft.getText().isEmpty()?Double.parseDouble(textFieldLeft.getPromptText()):Double.parseDouble(textFieldLeft.getText());
 		double right = textFieldRight.getText().isEmpty()?Double.parseDouble(textFieldRight.getPromptText()):Double.parseDouble(textFieldRight.getText());
 		int n = textFieldDivision.getText().isEmpty()?Integer.parseInt(textFieldDivision.getPromptText()):Integer.parseInt(textFieldDivision.getText());
 		double eps = textFieldEps.getText().isEmpty()?Double.parseDouble(textFieldEps.getPromptText()):Double.parseDouble(textFieldEps.getText()); 
 		
 		List<Double> rootsX = equation.solve(left, right, eps, n).getRoots();
-		//System.out.println(equation.solve(left, right, eps, n));
 		List<Double> rootsY = new ArrayList<Double>();
 		for (Double rootX : rootsX) {
 			rootsY.add(equation.getFFunction().y(rootX));
@@ -316,19 +311,19 @@ public class GUIController implements Initializable {
 		}
 		textAreaRoots.setText(result);
 
+		// Setting appropriate ticks and boundaries for the Axis
 		xAxis.setAutoRanging(false);
-	    xAxis.setTickUnit(1);
 	    yAxis.setAutoRanging(false);
-	    
 		if (rootsX.size()>0) {
 		    xAxis.setLowerBound(left);
 		    xAxis.setUpperBound(right);
-	
 		    yAxis.setLowerBound(Math.round((rootsY.get(0)-5)));
 		    yAxis.setUpperBound(Math.round(rootsY.get(rootsY.size()-1)+5));
 		}
-	    yAxis.setTickUnit(Math.round((yAxis.getUpperBound()-yAxis.getLowerBound())/50));
+	    xAxis.setTickUnit(1);
+	    yAxis.setTickUnit(Math.round((yAxis.getUpperBound()-yAxis.getLowerBound())/5));
 	    
+	    // Setting the formula field
 		formula.setText("f(x) = "+equation.getFFunction().getFormula()+"\n"+
 				"g(x) = "+equation.getGFunction().getFormula());
 
@@ -347,10 +342,6 @@ public class GUIController implements Initializable {
         catch(Exception e) {
             e.printStackTrace();
         }  
-
-	}
-	@FXML public void doAbout(ActionEvent event) {
-		showMessage("Курсовая работа. 2 курс\nПоиск корней методом хорд");
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
