@@ -46,7 +46,7 @@ import javafx.stage.FileChooser;
 import javafx.util.converter.DoubleStringConverter;
 
 public class GUIController implements Initializable {
-	XMLEquation equation = new XMLEquation("src/Function/Model/xml/samples/FourRoots.xml");
+	XMLEquation equation = new XMLEquation("src/Function/Model/xml/samples/NotSolvable.xml");
 	private String title;
 	private ObservableList<Coef> observableListF;
 	private ObservableList<XYCoef> observableListG;
@@ -115,7 +115,7 @@ public class GUIController implements Initializable {
 	        f.setValue(0);
     	}
         updateCoefTable();
-        equation.clearRoots();
+        //equation.clearRoots();
         drawLines();
     }
     private void updateX(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
@@ -133,7 +133,7 @@ public class GUIController implements Initializable {
     		equation.getGFunction().removePoint(t.getTablePosition().getRow());
     	}
     	updatePointsTable();
-        equation.clearRoots();
+        //equation.clearRoots();
         drawLines();
     }
     private void updateY(CellEditEvent<EquationData.Points.XYCoef, Double> t) {
@@ -147,7 +147,7 @@ public class GUIController implements Initializable {
     		equation.getGFunction().removePoint(t.getTablePosition().getRow());
     	}
     	updatePointsTable();
-        equation.clearRoots();
+        //equation.clearRoots();
         drawLines();
     	
     }

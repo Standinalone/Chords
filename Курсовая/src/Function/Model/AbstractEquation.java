@@ -82,7 +82,6 @@ public abstract class AbstractEquation {
 							}while ((Math.abs(xNext-tmp)>eps)&&(tmp<xNext));
 						}
 						// Eliminating unnecessary roots and adding new to the list of roots
-						//System.out.println(xNext);
 						if (!roots.contains(Double.valueOf(xNext))&&!Double.isNaN(xNext)) {
 							boolean lock=true;
 							for (double root : roots) {
