@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EquationData>
+    <Coefs>
+        <Coef Value="2.0" Index="0"/>
+    </Coefs>
+    <Points>
+        <XYCoef X="1.0" Y="2.0"/>
+        <XYCoef X="2.0" Y="2.0"/>
+    </Points>
+</EquationData>
